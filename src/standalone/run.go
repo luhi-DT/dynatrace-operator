@@ -2,6 +2,7 @@ package standalone
 
 import (
 	"fmt"
+	"path"
 	"path/filepath"
 
 	"github.com/Dynatrace/dynatrace-operator/src/arch"
@@ -159,6 +160,10 @@ func (runner *Runner) configureInstallation() error {
 			if err := runner.createCurlOptionsFile(); err != nil {
 				return errors.WithStack(err)
 			}
+		}
+		if runner.env.IsReadOnlyCSI {
+			log.Info("readOnly CSI detected, copying agent conf to empty-dir")
+			return copyFolder(runner.fs, path.Join(config.AgentBinDirMount, "agent/conf"), config.AgentConfInitDirMount)
 		}
 	}
 	if runner.env.DataIngestInjected {
