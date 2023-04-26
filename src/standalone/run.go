@@ -163,7 +163,10 @@ func (runner *Runner) configureInstallation() error {
 		}
 		if runner.env.IsReadOnlyCSI {
 			log.Info("readOnly CSI detected, copying agent conf to empty-dir")
-			return copyFolder(runner.fs, path.Join(config.AgentBinDirMount, "agent/conf"), config.AgentConfInitDirMount)
+			err := copyFolder(runner.fs, getReadOnlyAgentConfMountPath(), config.AgentConfInitDirMount)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	if runner.env.DataIngestInjected {
@@ -211,4 +214,8 @@ func (runner *Runner) enrichMetadata() error {
 
 func (runner *Runner) propagateTLSCert() error {
 	return runner.createConfFile(filepath.Join(config.AgentShareDirMount, "custom.pem"), runner.config.TlsCert)
+}
+
+func getReadOnlyAgentConfMountPath() string {
+	return path.Join(config.AgentBinDirMount, "agent/conf")
 }

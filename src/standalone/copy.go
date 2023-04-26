@@ -14,7 +14,7 @@ import (
 func copyFolder(fs afero.Fs, source string, destination string) error {
 	sourceInfo, err := fs.Stat(source)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	if !sourceInfo.IsDir() {
 		return errors.Errorf("%s is not a directory", source)
@@ -22,12 +22,12 @@ func copyFolder(fs afero.Fs, source string, destination string) error {
 
 	err = fs.MkdirAll(destination, sourceInfo.Mode())
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	entries, err := afero.ReadDir(fs, source)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	for _, entry := range entries {
 		sourcePath := filepath.Join(source, entry.Name())
@@ -51,28 +51,28 @@ func copyFolder(fs afero.Fs, source string, destination string) error {
 func copyFile(fs afero.Fs, sourcePath string, destinationPath string) error {
 	sourceFile, err := fs.Open(sourcePath)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	defer sourceFile.Close()
 
 	sourceInfo, err := sourceFile.Stat()
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	destinationFile, err := fs.OpenFile(destinationPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, sourceInfo.Mode())
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	defer destinationFile.Close()
 	_, err = io.Copy(destinationFile, sourceFile)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 
 	err = destinationFile.Sync()
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	return nil
 }
