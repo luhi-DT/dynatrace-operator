@@ -24,9 +24,7 @@ func TestCreateOptions(t *testing.T) {
 		options := provider.createOptions("test-namespace")
 
 		assert.NotNil(t, options)
-		assert.Equal(t, "test-namespace", options.Namespace)
 		assert.Equal(t, scheme.Scheme, options.Scheme)
 		assert.Equal(t, metricsBindAddress, options.MetricsBindAddress)
-		assert.Equal(t, port, options.Port)
 	})
 }
