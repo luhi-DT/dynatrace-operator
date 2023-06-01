@@ -28,11 +28,11 @@ type CertificateWatcher struct {
 	certificateSecretName string
 }
 
-func NewCertificateWatcher(mgr manager.Manager, namespace string, secretName string) *CertificateWatcher {
+func NewCertificateWatcher(mgr manager.Manager, namespace string, certDir string, secretName string) *CertificateWatcher {
 	return &CertificateWatcher{
 		apiReader:             mgr.GetAPIReader(),
 		fs:                    afero.NewOsFs(),
-		certificateDirectory:  mgr.GetWebhookServer().CertDir,
+		certificateDirectory:  certDir,
 		namespace:             namespace,
 		certificateSecretName: secretName,
 	}

@@ -28,13 +28,11 @@ var testSecurityContext = &corev1.SecurityContext{
 func TestCreateMutationRequestBase(t *testing.T) {
 	t.Run("should create a mutation request", func(t *testing.T) {
 		dynakube := getTestDynakube()
-		podWebhook := createTestWebhook(t,
-			[]dtwebhook.PodMutator{},
-			[]client.Object{
-				getTestNamespace(),
-				getTestPod(),
-				dynakube,
-			})
+		podWebhook := createTestWebhook([]dtwebhook.PodMutator{}, []client.Object{
+			getTestNamespace(),
+			getTestPod(),
+			dynakube,
+		})
 		mutationRequest, err := podWebhook.createMutationRequestBase(context.TODO(), *createTestAdmissionRequest(getTestPod()))
 		require.NoError(t, err)
 		require.NotNil(t, mutationRequest)
@@ -51,10 +49,7 @@ func TestCreateMutationRequestBase(t *testing.T) {
 
 func TestGetPodFromRequest(t *testing.T) {
 	t.Run("should return the pod struct", func(t *testing.T) {
-		podWebhook := createTestWebhook(t,
-			[]dtwebhook.PodMutator{},
-			[]client.Object{},
-		)
+		podWebhook := createTestWebhook([]dtwebhook.PodMutator{}, []client.Object{})
 		expected := getTestPod()
 
 		pod, err := getPodFromRequest(*createTestAdmissionRequest(expected), podWebhook.decoder)
@@ -66,10 +61,7 @@ func TestGetPodFromRequest(t *testing.T) {
 func TestGetNamespaceFromRequest(t *testing.T) {
 	t.Run("should return the namespace struct", func(t *testing.T) {
 		expected := getTestNamespace()
-		podWebhook := createTestWebhook(t,
-			[]dtwebhook.PodMutator{},
-			[]client.Object{expected},
-		)
+		podWebhook := createTestWebhook([]dtwebhook.PodMutator{}, []client.Object{expected})
 
 		namespace, err := getNamespaceFromRequest(context.TODO(), podWebhook.apiReader, *createTestAdmissionRequest(getTestPod()))
 		require.NoError(t, err)
@@ -89,10 +81,7 @@ func TestGetDynakubeName(t *testing.T) {
 func TestGetDynakube(t *testing.T) {
 	t.Run("should return the dynakube struct", func(t *testing.T) {
 		expected := getTestDynakube()
-		podWebhook := createTestWebhook(t,
-			[]dtwebhook.PodMutator{},
-			[]client.Object{expected},
-		)
+		podWebhook := createTestWebhook([]dtwebhook.PodMutator{}, []client.Object{expected})
 
 		dynakube, err := podWebhook.getDynakube(context.TODO(), testDynakubeName)
 		require.NoError(t, err)

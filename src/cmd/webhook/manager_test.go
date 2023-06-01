@@ -7,7 +7,6 @@ import (
 	"github.com/Dynatrace/dynatrace-operator/src/scheme"
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/rest"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 func TestCreateOptions(t *testing.T) {
@@ -29,23 +28,5 @@ func TestCreateOptions(t *testing.T) {
 		assert.Equal(t, scheme.Scheme, options.Scheme)
 		assert.Equal(t, metricsBindAddress, options.MetricsBindAddress)
 		assert.Equal(t, port, options.Port)
-	})
-	t.Run("configures webhooks server", func(t *testing.T) {
-		provider := NewProvider("certs-dir", "key-file", "cert-file")
-		expectedWebhookServer := &webhook.Server{}
-
-		mgr := &cmdManager.MockManager{}
-		mgr.On("GetWebhookServer").Return(expectedWebhookServer)
-
-		mgrWithWebhookServer := provider.setupWebhookServer(mgr)
-
-		assert.Equal(t, "certs-dir", expectedWebhookServer.CertDir)
-		assert.Equal(t, "key-file", expectedWebhookServer.KeyName)
-		assert.Equal(t, "cert-file", expectedWebhookServer.CertName)
-
-		mgrWebhookServer := mgrWithWebhookServer.GetWebhookServer()
-		assert.Equal(t, "certs-dir", mgrWebhookServer.CertDir)
-		assert.Equal(t, "key-file", mgrWebhookServer.KeyName)
-		assert.Equal(t, "cert-file", mgrWebhookServer.CertName)
 	})
 }

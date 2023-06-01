@@ -7,7 +7,9 @@ import (
 	"github.com/pkg/errors"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 const (
@@ -35,28 +37,34 @@ func (provider Provider) CreateManager(namespace string, config *rest.Config) (m
 		return nil, errors.WithStack(err)
 	}
 
-	return provider.setupWebhookServer(mgr), nil
+	return mgr, nil
 }
 
 func (provider Provider) createOptions(namespace string) ctrl.Options {
 	return ctrl.Options{
-		Namespace:          namespace,
 		Scheme:             scheme.Scheme,
 		MetricsBindAddress: metricsBindAddress,
-		Port:               port,
+		WebhookServer:      provider.setupWebhookServer(),
+		Cache: cache.Options{
+			Namespaces: []string{
+				namespace,
+			},
+		},
 	}
 }
 
-func (provider Provider) setupWebhookServer(mgr manager.Manager) manager.Manager {
+func (provider Provider) setupWebhookServer() webhook.Server {
 	tlsConfig := func(config *tls.Config) {
 		config.MinVersion = tls.VersionTLS13
 	}
 
-	webhookServer := mgr.GetWebhookServer()
-	webhookServer.CertDir = provider.certificateDirectory
-	webhookServer.KeyName = provider.keyFileName
-	webhookServer.CertName = provider.certificateFileName
-	webhookServer.TLSOpts = []func(*tls.Config){tlsConfig}
+	options := webhook.Options{
+		Port:     port,
+		CertDir:  provider.certificateDirectory,
+		CertName: provider.certificateFileName,
+		KeyName:  provider.keyFileName,
+		TLSOpts:  []func(*tls.Config){tlsConfig},
+	}
 
-	return mgr
+	return webhook.NewServer(options)
 }

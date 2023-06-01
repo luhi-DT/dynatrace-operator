@@ -84,12 +84,9 @@ func sumErrors(validationErrors []string) string {
 }
 
 func decodeRequestToDynakube(request admission.Request, dynakube *dynatracev1beta1.DynaKube) error {
-	decoder, err := admission.NewDecoder(scheme.Scheme)
-	if err != nil {
-		return errors.WithStack(err)
-	}
+	decoder := admission.NewDecoder(scheme.Scheme)
 
-	err = decoder.Decode(request, dynakube)
+	err := decoder.Decode(request, dynakube)
 	if err != nil {
 		return errors.WithStack(err)
 	}

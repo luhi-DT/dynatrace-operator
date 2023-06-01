@@ -110,7 +110,7 @@ func (builder CommandBuilder) buildRun() func(*cobra.Command, []string) error {
 
 		if !isDeployedViaOLM {
 			certificates.
-				NewCertificateWatcher(webhookManager, builder.namespace, webhook.SecretCertsName).
+				NewCertificateWatcher(webhookManager, builder.namespace, certificateDirectory, webhook.SecretCertsName).
 				WaitForCertificates()
 		}
 
