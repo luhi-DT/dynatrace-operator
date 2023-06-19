@@ -182,6 +182,6 @@ jobs:
       - name: Sign sbom for ${{matrix.registry}}
         uses: ./.github/actions/sign-image
         with:
-          image: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{steps.digest.outputs.digest}}.sbom
+          image: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:sha256-${{steps.digest.outputs.digest_value}}.sbom
           signing-key: ${{ secrets.COSIGN_PRIVATE_KEY }}
           signing-password: ${{ secrets.COSIGN_PASSWORD }}
