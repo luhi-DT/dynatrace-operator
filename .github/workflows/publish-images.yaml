@@ -138,7 +138,7 @@ jobs:
   attach-sbom:
     name: Attach sbom
     environment: Release
-    needs: [ prepare, push ]
+    needs: [ prepare, push, manifest ]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
