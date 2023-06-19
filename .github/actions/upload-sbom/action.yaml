@@ -15,7 +15,7 @@ runs:
     - name: Sign image with a key
       shell: bash
       run: |
-        cosign attach sbom --sbom ${{SBOM}} ${{IMAGE}} --input-format json --type cyclonedx
+        cosign attach sbom --sbom "${{SBOM}}" "${IMAGE}" --input-format json --type cyclonedx
       env:
         IMAGE: ${{ inputs.image }}
         SBOM: ${{ inputs.sbom }}
