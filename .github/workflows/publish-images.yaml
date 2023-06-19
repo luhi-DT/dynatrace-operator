@@ -60,7 +60,7 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        platform: [amd64, arm64, ppc64le]
+        platform: [amd64]
         registry: [quay]
         include:
         - registry: quay
