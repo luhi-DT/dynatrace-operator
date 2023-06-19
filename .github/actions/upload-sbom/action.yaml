@@ -18,4 +18,4 @@ runs:
         cosign attach sbom --sbom ${{SBOM}} ${{IMAGE}} --input-format json --type cyclonedx
       env:
         IMAGE: ${{ inputs.image }}
-        SBOM: ${{inputs.sbom}}
+        SBOM: ${{ inputs.sbom }}
