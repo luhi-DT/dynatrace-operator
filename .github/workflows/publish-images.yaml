@@ -170,7 +170,7 @@ jobs:
         id: sbom
         uses: aquasecurity/trivy-action@41f05d9ecffa2ed3f1580af306000f734b733e54 # v0.11.2
         with:
-          image-ref: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}
+          image-ref: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{steps.digest.outputs.digest}}
           format: 'cyclonedx'
           output: 'result.json'
           skip-dirs: '/usr/share/dynatrace-operator/third_party_licenses'
