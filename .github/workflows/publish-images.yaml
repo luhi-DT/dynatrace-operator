@@ -160,6 +160,12 @@ jobs:
           registry: ${{ matrix.url }}
           username: ${{ secrets[matrix.username] }}
           password: ${{ secrets[matrix.password] }}
+      - name: Get image digest
+        id: digest
+        env:
+          IMAGE: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}
+        run: |
+          hack/build/ci/get-image-digest.sh
       - name: Create sbom for ${{matrix.registry}}
         id: sbom
         uses: aquasecurity/trivy-action@41f05d9ecffa2ed3f1580af306000f734b733e54 # v0.11.2
@@ -171,16 +177,10 @@ jobs:
       - name: Upload sbom to ${{matrix.registry}}
         uses: ./.github/actions/upload-sbom
         with:
-          image: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}
+          image: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{steps.digest.outputs.digest}}
           sbom: 'result.json'
           signing-key: ${{ secrets.COSIGN_PRIVATE_KEY }}
           signing-password: ${{ secrets.COSIGN_PASSWORD }}
-      - name: Get image digest
-        id: digest
-        env:
-          IMAGE: ${{ matrix.url }}/${{ secrets[matrix.repository] }}:${{ needs.prepare.outputs.version }}
-        run: |
-          hack/build/ci/get-image-digest.sh
       - name: Sign sbom for ${{matrix.registry}}
         uses: ./.github/actions/sign-image
         with:
