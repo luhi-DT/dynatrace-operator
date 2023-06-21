@@ -25,7 +25,7 @@ runs:
     - name: Attach attestation to image
       shell: bash
       run: |
-        cosign attest --key env://COSIGN_PRIVATE_KEY  --type cyclonedx --predicate "${{ inputs.sbom }}" "${{ inputs.image }}"
+        cosign attest -y --key env://COSIGN_PRIVATE_KEY  --type cyclonedx --predicate ${{ inputs.sbom }} ${{ inputs.image }}
       env:
         COSIGN_PRIVATE_KEY: ${{ inputs.signing-key }}
         COSIGN_PASSWORD: ${{ inputs.signing-password }}
